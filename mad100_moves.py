@@ -184,11 +184,15 @@ def gen_moves(pos):  # PUBLIC
    # Returns generator of all legal moves of a board for player white (capital letters).
    # Move is a named tuple with list of steps and list of takes
    # Implementation detail: multiple use of the generator function
+   # Change: performance enhancement, moveList; 18-07-2016
+
+   moveList = []
    max_takes = 0
    for move in gen_moves_of_board(pos.board):
       max_takes = max(max_takes, len(move.takes))
+      moveList.append(move)
 
-   for move in gen_moves_of_board(pos.board):
+   for move in moveList:
       #print('MAX/MOVE: ', max_takes, move.takes)
       if len(move.takes) == max_takes:
          yield move
