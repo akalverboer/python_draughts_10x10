@@ -9,6 +9,7 @@ from __future__ import print_function
 from __future__ import division
 import re
 import sys
+import time
 import mad100
 from mad100_moves import Move, gen_moves, hasCapture, test1
 import mad100_search
@@ -178,7 +179,10 @@ def main():
             if len(comm.split()) == 1:
                # search for next move
                origc = color
+               start = time.time()
                move, score = mad100_search.search(pos, maxn=max_nodes)
+               finish = time.time()
+               print("Time elapsed: ", str(finish - start))
 
                pv_list = list(mad100_search.gen_pv(pos, mad100_search.tp))
                ptr = -1
@@ -191,8 +195,10 @@ def main():
                   origc = color
 
                   ##mad100_search.tpf = mad100_search.OrderedDict()   # reset transposition table
-
+                  start = time.time()
                   move, score = mad100_search.search_pvf(pos, max_nodes)
+                  finish = time.time()
+                  print("Time elapsed: ", str(finish - start))
 
                   pv_list = list(mad100_search.gen_pv(pos, mad100_search.tpf))
                   ptr = -1
@@ -203,9 +209,12 @@ def main():
                   origc = color
 
                   ##mad100_search.tpab = mad100_search.OrderedDict()   # reset transposition table
-
+                  
+                  start = time.time()
                   move, score = mad100_search.search_ab(pos, maxn=max_nodes)
-
+                  finish = time.time()
+                  print("Time elapsed: ", str(finish - start))
+                  
                   pv_list = list(mad100_search.gen_pv(pos, mad100_search.tpab))
                   ptr = -1
                   print('Principal Variation: %s' % (render_pv(origc, pos, mad100_search.tpab)))
@@ -268,7 +277,11 @@ def main():
 
         elif comm.startswith('m'):
             if len(comm.split()) == 1:
+               start = time.time()
                move, score = mad100_search.search(pos, maxn=max_nodes)
+               finish = time.time()
+               print("Time elapsed: ", str(finish - start))
+                  
                if move is None:
                   print('no move found', ' score: ', score)
                elif score <= -mad100_search.MATE_VALUE:
@@ -301,8 +314,11 @@ def main():
 
         elif comm.startswith('book'):
             # *** init opening book ***
+            start = time.time()
             #mad100_search.book_readFile('data/openbook_test15')
             mad100_search.book_readFile('data/mad100_openbook')
+            finish = time.time()
+            print("Time elapsed: ", str(finish - start))
 
         elif comm.upper().startswith('H') or comm.startswith('?'):
             print(' _________________________________________________________________  ')
