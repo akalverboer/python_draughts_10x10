@@ -122,11 +122,14 @@ def gen_bmoves(board, i):   # PRIVATE ============================
             if q == '.' and take != None:
                # capture detected; save and continue
                captures.append(Move([i,j], [take]))
+
    # output generator
    if captures != []: 
-      for m in captures: yield m
+      return captures
    elif moves != []: 
-      for m in moves: yield m
+      return moves
+   else:
+      return []
 # END def gen_bmoves ============================================
 
 def gen_extend_move(board, move):   # PRIVATE ===================
