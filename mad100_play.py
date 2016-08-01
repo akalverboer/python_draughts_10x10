@@ -349,31 +349,18 @@ def main():
             print('|_________________________________________________________________  ')
             print()
 
-        elif comm.startswith('test1'):
-            # *** test1 ***
-            pos2 = mad100.newPos(mad100.initial_ext)
-            mad100.print_pos(pos2)
-            square = 33
-            print('Basic moves for square:', square)
-            for bmove in test1(pos2, square):
-               print(bmove.steps)
-               print(bmove.takes)
+        elif comm.startswith('test0'):
+            # *** test0   Performance ***
+            # Most critical for speed is move generation, so we perform a test.
+            t0 = time.time()
 
-        elif comm.startswith('test2'):
-            # *** test2 ***
-            pos = mad100.newPos(mad100.initial_ext_test)
-            mad100.print_pos(pos)
-            print('Generated moves for position:')
-            for move in gen_moves(pos):
-               print('steps ', move.steps, ' takes ', move.takes)
+            lstring = ""
+            for i in range(1,3000):
+               for lmove in gen_moves(pos):
+                  lstring += mrender_move(color, lmove) + "  "
 
-        elif comm.startswith('test3'):
-            # *** test3 ***
-            board = mad100.board_ext_problem1   # test problem solving 1
-            pos = mad100.newPos(board)
-            color = WHITE            # WHITE / BLACK
-            ###mad100_search.tp = mad100_search.OrderedDict()   # reset transposition table
-            mprint_pos(color, pos)
+            t1 = time.time()
+            print("Time elapsed for test: ", str(t1 - t0))
 
         else:
             print("Error (unkown command):", comm)
