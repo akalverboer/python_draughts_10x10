@@ -79,10 +79,7 @@ def diagonal(i, d):
       stop = d[next] == 0
       yield next
 
-directions = {
-    'P': (NE, SE, SW, NW),    # piece can move forward but captures in all directions
-    'K': (NE, SE, SW, NW)     # king can move in all directions
-}
+directions = [NE, SE, SW, NW]
 
 Move = namedtuple('Move', 'steps takes')      # steps/takes are arrays of numbers 
 
@@ -91,8 +88,8 @@ def gen_bmoves(board, i):   # PRIVATE ============================
    moves, captures = [], []     # output lists
    p = board[i]
    if not p.isupper(): return   # only moves for player
-   for d in directions[p]:
-      if p == 'P':
+   if p == 'P':
+      for d in directions:
          q = board[d[i]]
          if q == '0': continue       # direction empty; try next direction
          if q == '.' and (d[i] == NE[i] or d[i] == NW[i]):
@@ -105,7 +102,8 @@ def gen_bmoves(board, i):   # PRIVATE ============================
             if r == '.':
                # capture detected; save and continue
                captures.append(Move([ i, d[d[i]] ], [ d[i] ]))
-      if p == 'K':
+   if p == 'K':
+      for d in directions:
          take = None
          for j in diagonal(i, d):     # diagonal squares from i in direction d
             q = board[j]
