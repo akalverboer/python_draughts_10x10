@@ -125,7 +125,7 @@ def search(pos, maxn=MAX_NODES):
     global nodes; nodes = 0
     if len(tp) > (TABLE_SIZE // 2):
        global tp
-       tp = OrderedDict()            # empty dict when half full
+       tp.clear()            # empty dict when half full
     
     print('thinking ....   max nodes: %d' %(maxn) )
     print '%8s %8s %8s %8s' % ('depth', 'nodes', 'gamma', 'score')   # header
@@ -251,7 +251,7 @@ def search_pvf(pos, maxn=MAX_NODES):
    player = 0            # 0 = starting player; 1 = opponent 
    if len(tpf) > (TABLE_SIZE // 2):
       global tpf
-      tpf = OrderedDict()            # empty dict when half full
+      tpf.clear()            # empty dict when half full
 
    print('thinking ....   max nodes: %d' %(maxn) )
    print '%8s %8s %8s' % ('depth', 'nodes', 'score')   # header
@@ -369,7 +369,7 @@ def search_ab(pos, maxn=MAX_NODES):
     global ynodes; ynodes = 0
     if len(tpab) > (TABLE_SIZE // 2):
        global tpab
-       tpab = OrderedDict()            # empty dict when half full
+       tpab.clear()            # empty dict when half full
 
     lower, upper = -MATE_VALUE, MATE_VALUE
     valWINDOW = 50         # ASPIRATION WINDOW: tune for optimal results
