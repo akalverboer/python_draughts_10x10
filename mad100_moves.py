@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from collections import namedtuple
+from collections import OrderedDict, namedtuple
 
 #=====================================================================
 # Move logic for Draughts 100 International Rules
@@ -83,11 +83,16 @@ directions = [NE, SE, SW, NW]
 
 Move = namedtuple('Move', 'steps takes')      # steps/takes are arrays of numbers 
 
-def gen_bmoves(board, i):   # PRIVATE ============================
-   # Generator for moves or one-take captures for square i
-   moves, captures = [], []     # output lists
+moveTable = OrderedDict()   # dict to remember legal moves of a position for better performance
+MOVETABLE_SIZE = 1000000
+
+
+def bmoves_from_square(board, i):
+   # List of moves (non-captures) for square i
+   moves = []     # output list
    p = board[i]
-   if not p.isupper(): return   # only moves for player
+   if not p.isupper(): return []  # only moves for player; return empty list
+
    if p == 'P':
       for d in directions:
          q = board[d[i]]
@@ -96,133 +101,200 @@ def gen_bmoves(board, i):   # PRIVATE ============================
             # move detected; save and continue
             moves.append(Move([ i, d[i] ], []))
 
-         if q.islower():
-            r = board[ d[d[i]] ]     # second diagonal square
-            if r == '0': continue    # no second diagonal square; try next direction
-            if r == '.':
-               # capture detected; save and continue
-               captures.append(Move([ i, d[d[i]] ], [ d[i] ]))
    if p == 'K':
       for d in directions:
          take = None
          for j in diagonal(i, d):     # diagonal squares from i in direction d
             q = board[j]
-            if q.isupper(): break     # own piece on this diagonal; stop
-            if q == '0': break        # stay inside the board; stop with this diagonal
-            if q == '.' and take == None:
+            if q == '0': break         # stay inside the board; stop with this diagonal
+            if q != '.': break         # stop this direction if next square not empty
+            if q == '.':
                # move detected; save and continue
-               moves.append(Move([i,j], []))
+               moves.append(Move([ i, d[i] ], []))
+
+   return moves
+# end bmoves_from_square ======================================
+
+
+def bcaptures_from_square(board, i):
+   # List of one-take captures for square i
+   captures = []     # output list
+   p = board[i]
+   if not p.isupper(): return []    # only captures for player; return empty list
+
+   if p == 'P':
+      for d in directions:
+         q = board[d[i]]        # first diagonal square
+         if q == '0': continue       # direction empty; try next direction
+         if q == '.' or q.isupper(): continue
+
+         if q.islower():
+            r = board[ d[d[i]] ]     # second diagonal square
+            if r == '0': continue         # no second diagonal square; try next direction
+            if r == '.':
+               # capture detected; save and continue
+               captures.append(Move([ i, d[d[i]] ], [ d[i] ]))
+
+   if p == 'K':
+      for d in directions:
+         take = None
+         for j in diagonal(i, d):     # diagonal squares from i in direction d
+            q = board[j]
+            if q.isupper(): break        # own piece on this diagonal; stop
+            if q == '0': break           # stay inside the board; stop with this diagonal
             if q.islower() and take == None:
-               take = j      # square of q
+               take = j      # square number of q
                continue
 
-            if q.islower() and take != None: break
+            if q.islower() and take != None: break 
             if q == '.' and take != None:
                # capture detected; save and continue
                captures.append(Move([i,j], [take]))
 
-   # output generator
-   if captures != []: 
-      return captures
-   elif moves != []: 
-      return moves
-   else:
-      return []
-# END def gen_bmoves ============================================
+   return captures
+# end bcaptures_from_square ======================================
 
-def gen_extend_move(board, move):   # PRIVATE ===================
-   # move is capture and maybe incomplete; try to extend it with basic captures
-   # return generator of extended captures
 
-   if move.steps == []: return   # empty move; return empty generator
-   if move.takes == []: return   # no capture; return empty generator
-   n_from = move.steps[0]
-   n_to = move.steps[-1]     # last step
-   new_board = list(board)   # clone of the board after doing the capture without taking the pieces
-   new_board[n_from] = '.'
-   new_board[n_to] = board[n_from]
+def basicMoves(board):
+   # Return list of basic moves of board; either captures or normal moves
+   # Basic moves are normal moves or one-take captures
+   bmoves_of_board = []
+   bcaptures_of_board = []
+   hasCapture = False
 
-   for bmove in gen_bmoves(new_board, n_to):
-      new_move = Move(list(move.steps), list(move.takes))  # make copy of move and extend it
-      if bmove.takes == []: continue                 # no capture; nothing to extend
-      if bmove.takes[0] in move.takes: continue      # do not capture the same piece
-      new_move.steps.append(bmove.steps[1])
-      new_move.takes.append(bmove.takes[0])
-      yield new_move
-
-# END gen_extend_move ============================================
-
-def gen_moves_of_square(board, i):  # PRIVATE ====================
-   # Make list with completed moves of square i
-
-   def gen_extend_next(board, move):
-      # Make generator of all moves that can extend given move (only for captures, use recursion)
-      # If move is not a capture, return generator of one move
-      thing_generated = False
-      for new_move in gen_extend_move(board, move):
-         thing_generated = True
-         for val in gen_extend_next(board, new_move): yield val     # RECURSION
-      if not thing_generated:
-         #print('ready', move)
-         yield move
-   # gen_extend_next
-
-   for bmove in gen_bmoves(board, i):
-      for move in gen_extend_next(board, bmove):   # make move complete 
-         #print('OUT: ', move)
-         yield move
-# END gen_moves_of_square ============================================
-
-def gen_moves_of_board(board):  # PRIVATE ============================
    for i, p in enumerate(board):
       if not p.isupper(): continue
-      for move in gen_moves_of_square(board, i):
-         yield move
-# END gen_moves_of_board =============================================
+      bcaptures = bcaptures_from_square(board, i)
+      if len(bcaptures) > 0: hasCapture = True
+      if hasCapture:
+         bcaptures_of_board.extend( bcaptures )
+      else:
+         bmoves = bmoves_from_square(board, i)
+         bmoves_of_board.extend( bmoves )
+
+   if len(bcaptures_of_board) > 0:
+      return bcaptures_of_board
+   else:
+      return bmoves_of_board
+
+# end basicMoves
 
 
-def gen_moves(pos):  # PUBLIC
-   # Returns generator of all legal moves of a board for player white (capital letters).
-   # Move is a named tuple with list of steps and list of takes
-   # Implementation detail: multiple use of the generator function
-   # Change: performance enhancement, moveList; 18-07-2016
+def searchCaptures(board):
+   # Capture construction by extending incomplete captures with basic captures
 
-   moveList = []
-   max_takes = 0
-   for move in gen_moves_of_board(pos.board):
-      max_takes = max(max_takes, len(move.takes))
-      moveList.append(move)
+   def boundCaptures(board, capture, depth ):
+      # Recursive construction of captures.
+      # - board: current board during capture construction
+      # - capture: incomplete capture used to extend with basic captures
+      # - depth: not used
+      bcaptures = bcaptures_from_square(board, capture.steps[-1])   # new extends of capture
 
-   for move in moveList:
-      #print('MAX/MOVE: ', max_takes, move.takes)
-      if len(move.takes) == max_takes:
-         yield move
+      completed = True
+      for bcapture in bcaptures: 
+         if len(bcapture.takes) == 0: continue         # no capture; nothing to extend
+         if bcapture.takes[0] in capture.takes: continue      # do not capture the same piece
 
-# END gen_moves ============================================
+         n_from = bcapture.steps[0]
+         n_to = bcapture.steps[-1]     # last step
 
-def hasCapture(pos):  # PUBLIC
-   # Returns true if capture found for position else false.
+         new_board = list(board)   # clone the board and do the capture without taking pieces
+         new_board[n_from] = '.'
+         new_board[n_to] = board[n_from]
+
+         new_capture = Move(list(capture.steps), list(capture.takes))  # make copy of capture and extend it
+
+         new_capture.steps.append(bcapture.steps[1])
+         new_capture.takes.append(bcapture.takes[0])
+
+         extended = False
+         result = boundCaptures(new_board, new_capture, depth + 1)   # RECURSION
+
+      if completed:
+         # Update global variables
+         global captures
+         captures.append(capture)
+         global max_takes
+         max_takes = len(capture.takes) if len(capture.takes) > max_takes else max_takes
+
+      return 0
+   # end boundCaptures
+
+   # ============================================================================
+   global captures; captures = []       # result list of captures
+   global max_takes; max_takes = 0       # max number of taken pieces
+
+   depth = 0
+   bmoves = basicMoves(board)
+
+   for bmove in bmoves:
+      if len(bmove.takes) == 0: break    # only moves, no captures; nothing to extend
+      n_from = bmove.steps[0]
+      n_to = bmove.steps[-1]     # last step
+
+      new_board = list(board)      # clone the board and do the capture without taking pieces
+      new_board[n_from] = '.'
+      new_board[n_to] = board[n_from]
+      result = boundCaptures(new_board, bmove, depth)
+
+   ##print("Max takes: " + str(max_takes))
+
+   result = [cap for cap in captures if len(cap.takes) == max_takes]
+   return result
+
+# end searchCaptures
+
+
+def hasCapture(pos):     # PUBLIC
+   # Returns True if capture for white found for position else False.
    for i, p in enumerate(pos.board):
       if not p.isupper(): continue
-      for move in gen_bmoves(pos.board, i):
-         if len(move.takes) > 0: return True
+      bcaptures = bcaptures_from_square(pos.board, i)
+      if len(bcaptures) > 0: return True 
    return False
+# end hasCapture
 
-# END hasCapture ============================================
 
-def test1(pos, i):  # PUBLIC
-   for bmove in gen_bmoves(pos.board, i):
-      yield bmove
+def gen_moves(pos):       # PUBLIC
+   # Returns list of all legal moves of a board for player white (capital letters).
+   # Move is a named tuple with array of steps and array of takes
+   #
+   entry = moveTable.get(pos.key())
+   if entry is not None: return entry 
 
-def test2(pos):  # PUBLIC
-   move = Move([25,18], [22])
-   for emove in gen_extend_move(pos.board, move):
-      yield emove
+   if hasCapture(pos):
+      legalMoves = searchCaptures(pos.board)
+   else:
+      legalMoves = basicMoves(pos.board)
 
-def test3(pos,i):  # PUBLIC
-   for move in gen_moves_of_square(pos.board, i):
-      yield move
+   moveTable[pos.key()] = legalMoves
+   if len(moveTable) > MOVETABLE_SIZE:
+      clearTable()
+      ## moveTable.popitem()    # popitem removes and returns an arbitrary (key,value) pair
 
+   return legalMoves
+# end gen_moves ============================================
+
+
+def isLegal(pos, move):     # PUBLIC
+   # Returns True if move for position is legal else False.
+   if move in gen_moves(pos):
+       ## print('Illegal move: ' +  move)
+       return True
+   return False
+# end isLegal
+
+
+def clearMoveTable():        # PUBLIC
+   # Clear moveTable
+   moveTable.clear()
+
+
+def moveTableSize():     # PUBLIC
+   print('moveTable entries: ' + str(len(moveTable)))
+
+
+# *********************************************************************************
 def main():
    print('nothing to do')
    return 0
