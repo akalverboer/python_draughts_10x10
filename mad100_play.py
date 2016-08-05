@@ -11,7 +11,7 @@ import re
 import sys
 import time
 import mad100
-from mad100_moves import Move, gen_moves, hasCapture, test1
+from mad100_moves import Move, gen_moves, hasCapture, clearMoveTable, isLegal, moveTableSize
 import mad100_search
 
 # Python 2 compatability
@@ -159,7 +159,8 @@ def main():
 
             pos = mad100.newPos(board)
             color = WHITE            # WHITE / BLACK
-            mad100_search.tp = mad100_search.OrderedDict()   # reset transposition table
+            mad100_search.tp.clear()   # reset transposition table
+            clearMoveTable()
             mprint_pos(color, pos)
 
         elif comm.startswith('fen'):
@@ -168,7 +169,8 @@ def main():
             _, fen = comm.split(' ', 1)
             pos = parseFEN(fen)
             color = BLACK if fen[0] == 'B' else WHITE
-            mad100_search.tp = mad100_search.OrderedDict()   # reset transposition table
+            mad100_search.tp.clear()   # reset transposition table
+            clearMoveTable()
             mprint_pos(color, pos)
 
         elif comm == 'eval':
@@ -361,6 +363,10 @@ def main():
 
             t1 = time.time()
             print("Time elapsed for test: ", str(t1 - t0))
+
+        elif comm.startswith('test1'):
+            # *** test1 ***
+            moveTableSize()
 
         else:
             print("Error (unkown command):", comm)
