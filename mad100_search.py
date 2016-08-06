@@ -508,6 +508,12 @@ def book_searchMove(pos):
    else:
       return None
 
+def clearSearchTables():
+   # Removes all key-value pairs from the transposition tables.
+   tp.clear()
+   tpf.clear()
+   tpab.clear()
+
 ###############################################################################
 def main():
    print('nothing to do')
