@@ -22,9 +22,9 @@ if sys.version_info[0] == 2:
 WHITE, BLACK = 0, 1
 
 def main():
-    print("=======================================================")
-    print("| MAD100: engine for draughts 100 international rules | ")
-    print("=======================================================")
+    print("=============================================================")
+    print("| MAD100: Python engine for draughts 100 international rules | ")
+    print("=============================================================")
 
     stack = []
     stack.append('new')          # initial board
