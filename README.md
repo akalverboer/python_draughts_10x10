@@ -13,8 +13,8 @@ Screenshot
 
 Run it!
 =======
-MAD100.py is contained in four python files: mad100.py, mad100_moves.py, mad100_search.py, mad100_play.py 
-Run it from the commandline with: *python mad100_play.py*
+MAD100.py is contained in four python files: mad100_run.py, mad100.py, mad100_moves.py, mad100_search.py, mad100_play.py 
+Run it from the commandline with: *python mad100_run.py*
 Answer with the command **h** for help.
 
 Features
