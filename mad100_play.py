@@ -159,7 +159,7 @@ def main():
 
             pos = mad100.newPos(board)
             color = WHITE            # WHITE / BLACK
-            mad100_search.tp.clear()   # reset transposition table
+            mad100_search.clearSearchTables()   # clear transposition tables
             clearMoveTable()
             mprint_pos(color, pos)
 
@@ -169,7 +169,7 @@ def main():
             _, fen = comm.split(' ', 1)
             pos = parseFEN(fen)
             color = BLACK if fen[0] == 'B' else WHITE
-            mad100_search.tp.clear()   # reset transposition table
+            mad100_search.clearSearchTables()   # clear transposition tables
             clearMoveTable()
             mprint_pos(color, pos)
 
@@ -229,9 +229,9 @@ def main():
                print('Best move:', mrender_move(color, move))
 
 
-        elif comm.startswith('pv'):
+        elif comm.startswith('p'):
             if len(comm.split()) == 1:
-               stack.append('pv >')    # do next move in PV
+               stack.append('p >')    # do next move in PV
             elif len(comm.split()) == 2:
                _, action = comm.split()
                if len(pv_list) == 0:
@@ -337,10 +337,10 @@ def main():
             print('| m       : let computer search and play a move  ')
             print('| m <move>: do move (format: 32-28, 16x27, etc)  ')
             print('|  ')
-            print('| pv: do moves of PV (principal variation) ')
-            print('|   pv >  : next move  ')
-            print('|   pv <  : previous move  ')
-            print('|   pv << : first position  ')
+            print('| p: do moves of PV (principal variation) ')
+            print('|   p >  : next move  ')
+            print('|   p <  : previous move  ')
+            print('|   p << : first position  ')
             print('|  ')
             print('| go: search methods for best move and PV generation  ')
             print('|   go    : method 1 > MTD-bi  ')
@@ -352,22 +352,29 @@ def main():
             print()
 
         elif comm.startswith('test0'):
-            # *** test0   Performance ***
             # Most critical for speed is move generation, so we perform a test.
+            # If no second argument, the moveTable is not disabled
+            # If second argument, the maxtimes is set to the second argument.
+            # Note that the speed depends on the position (number of legal moves)
+            maxtimes = 10000   # default
+
+            mt_disabled = False if len(comm.split()) == 1 else True
+            if len(comm.split()) == 2:
+               _, maxtimes = comm.split()
+               maxtimes = int(maxtimes)
+
             t0 = time.time()
-
-            lstring = ""
-            for i in range(1,3000):
-               for lmove in gen_moves(pos):
-                  lstring += mrender_move(color, lmove) + "  "
-
+            for i in range(1,maxtimes):
+               legalMoves = gen_moves(pos)
+               if mt_disabled: clearMoveTable()
             t1 = time.time()
-            print("Time elapsed for test: ", str(t1 - t0))
+
+            print("Time elapsed for test: ", str(t1 - t0), "  Max times: ", str(maxtimes) )
 
         elif comm.startswith('test1'):
             # *** test1 ***
             moveTableSize()
-
+        #===================================================================================
         else:
             print("Error (unkown command):", comm)
 
