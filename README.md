@@ -49,7 +49,7 @@ draughts engine, Python language, MTD-bi search, alpha-beta pruning, fail soft, 
 
 Links
 =====
-- [Python website](www.python.org)
-- [Chess programming](chessprogramming.wikispaces.com)
-- [Wikipedia draughts](en.wikipedia.org/wiki/International_draughts)
+- [Python website](https://www.python.org/)
+- [Chess programming](https://chessprogramming.wikispaces.com/)
+- [Wikipedia draughts](https://en.wikipedia.org/wiki/International_draughts)
 
