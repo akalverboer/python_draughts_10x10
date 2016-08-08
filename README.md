@@ -13,8 +13,14 @@ Screenshot
 
 Run it!
 =======
-MAD100.py is contained in four python files: mad100_run.py, mad100.py, mad100_moves.py, mad100_search.py, mad100_play.py 
-Run it from the commandline with: *python mad100_run.py*
+MAD100.py is contained in five python files:
+- mad100_run.py
+- mad100.py 
+- mad100_moves.py
+- mad100_search.py
+- mad100_play.py 
+
+Run it from the commandline with: *python mad100_run.py*  
 Answer with the command **h** for help.
 
 Features
@@ -39,4 +45,4 @@ By the way: for python programmers it is not difficult to convert it to a 64 squ
 
 Tags
 ====
-draughts engine, MTD-bi search, alpha-beta pruning, fail soft, negamax, aspiration windows, null move heuristic,  opening book, quiescence search, iterative deepening, transposition table, principal variation, evaluation, piece square tables, FEN
+draughts engine, Python language, MTD-bi search, alpha-beta pruning, fail soft, negamax, aspiration windows, null move heuristic,  opening book, quiescence search, iterative deepening, transposition table, principal variation, evaluation, piece square tables, FEN
