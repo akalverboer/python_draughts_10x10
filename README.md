@@ -13,7 +13,7 @@ Screenshot
 
 Run it!
 =======
-MAD100.py is contained in five python files:
+MAD100.py is developed with Python 2.7.3 and is contained in five Python files:
 - mad100_run.py
 - mad100.py 
 - mad100_moves.py
@@ -41,7 +41,7 @@ Why MAD100?
 ===========
 The name MAD refers to the reverse of DAM: the dutch name for the king of draughts. 
 The number refers to the 100 squares of the board.
-By the way: for python programmers it is not difficult to convert it to a 64 squares version.
+By the way: for Python programmers it is not difficult to convert it to a 64 squares version.
 
 Tags
 ====
