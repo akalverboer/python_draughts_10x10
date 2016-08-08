@@ -39,10 +39,17 @@ The evaluation in MAD100.py is not very sophisticated. E.g. we don't distinguish
 
 Why MAD100?
 ===========
-The name MAD refers to the reverse of DAM: the dutch name for the king of draughts. 
-The number refers to the 100 squares of the board.
+The name MAD refers to the reverse of DAM: the dutch name for the king of draughts.  
+The number refers to the 100 squares of the board.  
 By the way: for Python programmers it is not difficult to convert it to a 64 squares version.
 
 Tags
 ====
 draughts engine, Python language, MTD-bi search, alpha-beta pruning, fail soft, negamax, aspiration windows, null move heuristic,  opening book, quiescence search, iterative deepening, transposition table, principal variation, evaluation, piece square tables, FEN
+
+Links
+=====
+- [Python website](www.python.org)
+- [Chess programming](chessprogramming.wikispaces.com)
+- [Wikipedia draughts](en.wikipedia.org/wiki/International_draughts)
+
