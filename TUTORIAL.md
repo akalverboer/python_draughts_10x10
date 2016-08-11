@@ -86,7 +86,7 @@ Let the search start:
 It takes some time for the engine to finish. Depending on the implementation, you
 have to wait some time. In my case:  
 - Python: 35 sec
-- Nim :   55 sec
+- Nim :   27 sec
 - Ruby:   140 sec
 
 The game ends in a 1x1 position after 21 plies.  
@@ -101,9 +101,7 @@ logic for each language. So a comparison of the three engines can learn us about
 the execution speed of the three languages.  
 
 The application is not designed for optimal performance. Also the programming
-languages are not suitable for high speed.  
-I hoped a better performance of Nim because the source code is compiled into the
-high performance C language.  
+languages Python and Ruby are not suitable for high speed.  
 
 Most critical for speed is move generation. I have performed a test to measure
 the speed of move generation.  
@@ -111,6 +109,6 @@ To do the test enter **test0 number**. The number is the number of times the
 move generation is executed. Use a number like 10000 or 20000.  
 
 Comparing the three implementations for execution speed of move generation,
-the order of speed is expected based on the demo at point 6: Python, Nim, Ruby.
+the order of speed is expected based on the demo at point 6: Nim, Python, Ruby.
 
 
