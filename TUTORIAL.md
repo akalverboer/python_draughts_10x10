@@ -86,7 +86,7 @@ Let the search start:
 It takes some time for the engine to finish. Depending on the implementation, you
 have to wait some time. In my case:  
 - Python: 35 sec
-- Nim :   27 sec
+- Nim :   14 sec
 - Ruby:   140 sec
 
 The game ends in a 1x1 position after 21 plies.  
