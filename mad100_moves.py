@@ -110,7 +110,8 @@ def bmoves_from_square(board, i):
             if q != '.': break         # stop this direction if next square not empty
             if q == '.':
                # move detected; save and continue
-               moves.append(Move([ i, d[i] ], []))
+               # BUG 21-03-2018: in next statement is d[i] replaced by j
+               moves.append(Move([ i, j ], []))
 
    return moves
 # end bmoves_from_square ======================================
