@@ -9,7 +9,6 @@
 # Numeric representation of squares.
 # =====================================================================================
 
-from __future__ import print_function
 import re
 import sys
 from mad100_moves import gen_moves
@@ -251,19 +250,28 @@ def boardToList(str):
     return list(board)
 
 def print_pos(pos):
-    # ⛀    ⛁    ⛂    ⛃
+    # unicodes:  ⛀    ⛁    ⛂    ⛃
     # board is array 0..52; fill 'p', 'P', 'k', 'K', '.'
-    print()
-    spaces = 0
-    uni_pieces = {'p':'⛂', 'k':'⛃', 'P':'⛀', 'K':'⛁', '.':'·', ' ':' '}
+    numSpaces = 0
+    uni_piececode = {'p':'⛂', 'k':'⛃', 'P':'⛀', 'K':'⛁', '.':'·', ' ':' '}  # utf-8
+    chr_piececode = {'p':'b', 'k':'B', 'P':'w', 'K':'W', '.':'·', ' ':' '}   # asci
+    if 0 == 0:
+       piececode = uni_piececode
+    else:
+       piececode = chr_piececode
     nrows = 10
+
+    print("")
     for i in range(1, nrows+1):
        row_len = 5
        start = (i-1) * (nrows//2) + 1
-       row = pos.board[start: start + (nrows//2)]
-       spaces = 0 if spaces == 2 else 2   # alternate
-       print(' %2d - %2d ' %( start, start + nrows//2 - 1),'  ', ' '*spaces ,'   '.join(uni_pieces.get(p, p) for p in row))
-    print()
+       row = pos.setup[start: start + (nrows//2)]
+       numSpaces = 0 if numSpaces == 2 else 2   # alternate
+       spaces = ' ' * numSpaces                   # spaces before row of pieces
+       numbering = ' %2d - %2d ' %( start, start + nrows//2 - 1)
+       pieces = '   '.join(piececode.get(p, p) for p in row)
+       print(numbering + '   ' + spaces + pieces)
+    print("")
 
 def main():
     print("=======================================================")
