@@ -208,7 +208,7 @@ def searchCaptures(board):
          new_capture.steps.append(bcapture.steps[1])
          new_capture.takes.append(bcapture.takes[0])
 
-         extended = False
+         completed = False
          result = boundCaptures(new_board, new_capture, depth + 1)   # RECURSION
 
       if completed:
