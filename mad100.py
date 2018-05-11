@@ -265,7 +265,7 @@ def print_pos(pos):
     for i in range(1, nrows+1):
        row_len = 5
        start = (i-1) * (nrows//2) + 1
-       row = pos.setup[start: start + (nrows//2)]
+       row = pos.board[start: start + (nrows//2)]
        numSpaces = 0 if numSpaces == 2 else 2   # alternate
        spaces = ' ' * numSpaces                   # spaces before row of pieces
        numbering = ' %2d - %2d ' %( start, start + nrows//2 - 1)
